@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Local tooling / pairing state (not part of the project)
+.deeppairing/
+.claude/
+.pytest_cache/
+
+# Runtime corpus (SQLite db + image blobs); keep the data/seeds placeholder
+data/corpus/
+*.db
