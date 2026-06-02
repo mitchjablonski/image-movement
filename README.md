@@ -23,7 +23,8 @@ person).
 The photometric residual gate is what separates a reused image (same pixels
 after alignment) from a *different photo of the same person* (same geometry, but
 different pixels) — the case that pure geometric matching cannot. Validated on
-full CelebA: 100% recall, 0% different-person FP, ~0.012% genuine same-person FP.
+full CelebA (shipped `max_residual=12`): 99.95% recall, ~0% different-person FP,
+and **no genuine same-person false positives** — only near-duplicate photos remain.
 
 Stage 1 defaults to a pure-Python linear scan; set
 `IMOVE_STAGE1__INDEX_BACKEND=faiss` to use a faiss `IndexBinaryFlat` backend
@@ -80,12 +81,14 @@ case, since two different photos of the **same person** (especially face-aligned
 are the most likely to fool a geometry-only matcher. Faces are a stress test, not
 the use case: the detector targets reuse of *any* image.
 
-- **CelebA** — full set (8,156 identities; ~16k same-person pairs; ~163k
-  different-person pairs): **100% recall, 0% different-person false positives,
-  ~0.012% genuine same-person false positives** (the few residual matches are
-  near-identical photos). The photometric residual gate is what makes this hold —
-  it separates a reused image from a *different* photo of the same subject, which
-  inlier geometry alone cannot.
+- **CelebA** — full set (8,156 identities; 16,312 true copies; ~16k same-person
+  pairs; ~163k different-person pairs), at the shipped default `max_residual=12`:
+  **99.95% recall, ~0% different-person false positives (1–2 of 162,910), and
+  zero genuine same-person false positives**. The photometric residual gate
+  rejects even the borderline *distinct-photo* same-person matches; the only
+  same-person matches that survive (22, ~0.1%) are near-duplicate photos —
+  effectively the same image. (Tightening the residual gate from 15 to 12 to drop
+  those borderline cases cost ~0.05% recall — a deliberate, favourable trade.)
 - **LFW** — same pipeline; recall is lower only because the ~94 px thumbnails are
   keypoint-poor, and recovers at higher resolution.
 
