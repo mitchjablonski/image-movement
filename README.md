@@ -6,6 +6,8 @@ has re-encoded it (JPEG compression noise). Tuned to flag **only** true copies,
 never legitimately different images (including two genuine captures of the same
 person).
 
+> 🤝 **Built with [deepPairing](https://github.com/mitchjablonski/deepPairing)** — designed and built end-to-end in a paired session with an MCP-based human-in-the-loop tool, where every decision, plan, and code change is surfaced and reviewed in a companion UI before it lands.
+
 ## Approach — a three-gate cascade
 
 1. **Stage 1, perceptual-hash filter** (`stage1_hash.py`): a fast, permissive
@@ -122,10 +124,3 @@ Serving knobs live under `config.py`'s `ServingConfig` (env-overridable):
 | `service.py` | reuse-detection service: enroll / check / cross-user alerting |
 | `server.py` | FastAPI HTTP transport (enroll/check endpoints + `/docs` console) |
 | `cli.py` | `compare`, `eval`, `enroll`, `check`, `serve` entry points |
-
-## Built with deepPairing
-
-This project was designed and built end-to-end in a paired session with
-[**deepPairing**](https://github.com/mitchjablonski/deepPairing) — an MCP-based
-human-in-the-loop pairing tool where every decision, plan, and code change is
-surfaced and reviewed in a companion UI before it lands.
