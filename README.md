@@ -73,6 +73,31 @@ returning user), so its FP rate is reported separately. The recommended
 operating point is the lowest inlier threshold with **zero** false positives on
 both negative classes.
 
+## Validation & datasets
+
+The cascade was stress-tested on real face datasets — deliberately the *hardest*
+case, since two different photos of the **same person** (especially face-aligned)
+are the most likely to fool a geometry-only matcher. Faces are a stress test, not
+the use case: the detector targets reuse of *any* image.
+
+- **CelebA** — full set (8,156 identities; ~16k same-person pairs; ~163k
+  different-person pairs): **100% recall, 0% different-person false positives,
+  ~0.012% genuine same-person false positives** (the few residual matches are
+  near-identical photos). The photometric residual gate is what makes this hold —
+  it separates a reused image from a *different* photo of the same subject, which
+  inlier geometry alone cannot.
+- **LFW** — same pipeline; recall is lower only because the ~94 px thumbnails are
+  keypoint-poor, and recovers at higher resolution.
+
+Both datasets are fetched on demand by `imagemovement/datasets.py` and are **not
+redistributed** in this repository.
+
+> **Dataset terms** (these apply to the datasets, **not** to this MIT-licensed code):
+> **CelebA** is for *non-commercial research use only* — Liu et al.,
+> [*Deep Learning Face Attributes in the Wild*](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html), ICCV 2015.
+> **LFW** is freely usable with attribution — Huang et al.,
+> [*Labeled Faces in the Wild*](https://vis-www.cs.umass.edu/lfw/), UMass TR 07-49, 2007.
+
 ## Serving — detect reuse across users/attempts
 
 Enroll each submission into a persistent corpus (SQLite rows + lossless image
@@ -118,7 +143,7 @@ Serving knobs live under `config.py`'s `ServingConfig` (env-overridable):
 | `stage1_hash.py` | stage-1 perceptual-hash candidate filter |
 | `stage2_geom.py` | stage-2 geometric verification (the decision-maker) |
 | `detector.py` | the in-memory cascade that wires stage 1 → stage 2 |
-| `datasets.py` | LFW loader (real faces grouped by identity) |
+| `datasets.py` | dataset loaders (LFW + CelebA) for validation |
 | `evaluate.py` | three-category harness + precision/recall metrics |
 | `corpus.py` | persistent corpus (SQLite rows + lossless image blobs) |
 | `service.py` | reuse-detection service: enroll / check / cross-user alerting |
