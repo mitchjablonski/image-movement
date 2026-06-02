@@ -89,7 +89,7 @@ _DEMO_HTML = """<!doctype html>
 </head>
 <body>
 <h1>image-movement</h1>
-<p class="sub">Detect reuse of the <b>same core image</b> across user submissions &mdash; even after zoom, pixel shift, and re-compression.</p>
+<p class="sub">Detect reuse of the <b>same core image</b> &mdash; the same picture appearing more than once &mdash; even after zoom, pixel shift, and re-compression.</p>
 
 <fieldset style="border-color:#2563eb">
  <legend>Submit a new image &nbsp;(check &rarr; enroll)</legend>
@@ -188,7 +188,7 @@ async function check(){
 def create_app(config: DetectorConfig | None = None) -> FastAPI:
     app = FastAPI(
         title="image-movement",
-        description="Detect reuse of the same core image across user submissions.",
+        description="Detect reuse of the same core image across a collection of images.",
     )
     app.state.service = ReuseDetectorService(config or DetectorConfig())
 

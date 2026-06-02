@@ -126,7 +126,7 @@ def main(argv: list[str] | None = None) -> int:
     p_enroll = sub.add_parser("enroll", help="enroll an image into the corpus")
     p_enroll.add_argument("image")
     p_enroll.add_argument("--user", required=True, help="user_id submitting the image")
-    p_enroll.add_argument("--attempt", default="-", help="attempt_id for this submission")
+    p_enroll.add_argument("--attempt", default="-", help="attempt_id for this image")
     p_enroll.set_defaults(func=cmd_enroll)
 
     p_check = sub.add_parser("check", help="check an image for reuse against the corpus")
@@ -136,7 +136,7 @@ def main(argv: list[str] | None = None) -> int:
     p_submit = sub.add_parser("submit", help="check an image for reuse AND enroll it (intake flow)")
     p_submit.add_argument("image")
     p_submit.add_argument("--user", required=True, help="user_id submitting the image")
-    p_submit.add_argument("--attempt", default="-", help="attempt_id for this submission")
+    p_submit.add_argument("--attempt", default="-", help="attempt_id for this image")
     p_submit.set_defaults(func=cmd_submit)
 
     p_serve = sub.add_parser("serve", help="run the HTTP API (live demo + /docs console)")

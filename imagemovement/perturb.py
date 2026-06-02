@@ -84,7 +84,7 @@ def translate(img: np.ndarray, dx: int, dy: int) -> np.ndarray:
 
 
 def perturb(img: np.ndarray, params: PerturbParams) -> np.ndarray:
-    """Apply the full chain in submission order: zoom -> shift -> JPEG re-encode."""
+    """Apply the full chain in order: zoom -> shift -> JPEG re-encode."""
     out = zoom(img, params.zoom_factor)
     out = translate(out, params.dx, params.dy)
     return jpeg_recompress(out, params.quality, params.subsampling)

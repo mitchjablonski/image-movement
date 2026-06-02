@@ -17,7 +17,7 @@ the evaluation harness, which sweeps the inlier threshold over geom_ok pairs,
 picks up the photometric gate with no change.
 
 A similarity model (4 DOF) is deliberately chosen over a full homography
-(8 DOF): it matches the expected re-submission edits (zoom + shift) and cannot overfit distinct
+(8 DOF): it matches the expected edits (zoom + shift) and cannot overfit distinct
 images the way a homography can. Small inputs are upscaled before feature
 detection (min_feature_dim) using a SHARED factor for both images, so the
 estimated scale/rotation -- and the residual comparison -- stay consistent.
