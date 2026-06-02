@@ -1,6 +1,6 @@
 """Seed image loading, with a synthetic fallback.
 
-Real validation should run on representative submission images dropped into
+Real validation should run on representative real images dropped into
 ``data/seeds/``. When none are present we generate a small set of distinct,
 feature-rich synthetic images so the whole pipeline is runnable end-to-end
 immediately -- each has sharp shapes (plenty of ORB keypoints) and is visually

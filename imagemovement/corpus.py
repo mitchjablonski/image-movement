@@ -1,6 +1,6 @@
 """SQLite-backed corpus store for the reuse-detection service.
 
-Each enrolled image becomes a SQLite row (submission metadata + perceptual-hash
+Each enrolled image becomes a SQLite row (source metadata + perceptual-hash
 hex + blob path + timestamp) plus a lossless PNG blob on disk. Stage-2
 verification re-derives ORB features and the photometric residual from the
 ACTUAL pixels, so the corpus retains the image, not just a fingerprint; PNG is

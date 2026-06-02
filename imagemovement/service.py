@@ -1,7 +1,7 @@
 """Reuse-detection service: persistent corpus + 3-gate cascade + cross-user alerting.
 
 Wires the Phase-1 detector to the Phase-2 corpus:
-  enroll(image, user_id, attempt_id) -> persist + index a submission
+  enroll(image, user_id, attempt_id) -> persist + index an image
   check(image)                       -> run hash filter -> geometric+photometric
                                         verify against each candidate's pixels
                                         -> confirmed Matches
@@ -51,7 +51,7 @@ class Alert:
 
 
 class ReuseDetectorService:
-    """Enroll submissions into a persistent corpus and detect image reuse across them."""
+    """Enroll images into a persistent corpus and detect image reuse across them."""
 
     def __init__(self, config: DetectorConfig | None = None) -> None:
         self.config = config or DetectorConfig()
@@ -127,7 +127,7 @@ class ReuseDetectorService:
 
     # -- convenience ------------------------------------------------------
     def submit(self, image: np.ndarray, user_id: str, attempt_id: str, *, now: float | None = None) -> tuple[Alert, CorpusRecord]:
-        """Detect reuse against the existing corpus, then enroll this submission."""
+        """Detect reuse against the existing corpus, then enroll this image."""
         alert = self.alert(self.check(image), now=now)
         record = self.enroll(image, user_id, attempt_id, now=now)
         return alert, record

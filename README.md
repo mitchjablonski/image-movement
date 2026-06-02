@@ -1,8 +1,8 @@
 # image-movement
 
-Detect reuse of the **same core image** across user submissions, even when a
-submitter has applied slight deltas (zoom, pixel shift) and the processing pipeline
-has re-encoded it (JPEG compression noise). Tuned to flag **only** true copies,
+Detect reuse of the **same core image** — the same picture appearing more than
+once — even when it has been altered by slight deltas (zoom, pixel shift) and
+re-encoded (JPEG compression noise). Tuned to flag **only** true copies,
 never legitimately different images (including two genuine captures of the same
 person).
 
@@ -98,18 +98,19 @@ redistributed** in this repository.
 > **LFW** is freely usable with attribution — Huang et al.,
 > [*Labeled Faces in the Wild*](https://vis-www.cs.umass.edu/lfw/), UMass TR 07-49, 2007.
 
-## Serving — detect reuse across users/attempts
+## Serving — persistent corpus + reuse alerting
 
-Enroll each submission into a persistent corpus (SQLite rows + lossless image
-blobs), then check new submissions against it. Reuse of the same core image
-across different users is the signal of interest.
+Enroll each image into a persistent corpus (SQLite rows + lossless image blobs),
+then check new images against it — the same core image appearing more than once
+is the signal of interest. Each image can carry an optional source id (e.g. a
+user), so an alert can require the image to recur across several distinct sources.
 
 ```bash
-# enroll submissions
+# enroll images (an optional source id groups matches; here, a user)
 uv run python -m imagemovement.cli enroll alice.jpg --user alice --attempt a1
 uv run python -m imagemovement.cli enroll bob.jpg   --user bob   --attempt b1
 
-# check a new submission for reuse against the corpus
+# check a new image for reuse against the corpus
 uv run python -m imagemovement.cli check suspect.jpg
 # -> REUSE DETECTED: 1 match(es) across 1 distinct user(s) -> alert=TRIGGERED ...
 ```
