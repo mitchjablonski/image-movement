@@ -27,8 +27,8 @@ full CelebA (shipped `max_residual=12`): 99.95% recall, ~0% different-person FP,
 and **no genuine same-person false positives** — only near-duplicate photos remain.
 
 Stage 1 defaults to a pure-Python linear scan; set
-`IMOVE_STAGE1__INDEX_BACKEND=faiss` to use a faiss `IndexBinaryFlat` backend
-instead — **exact** (returns the identical candidate set, proven by a test) but
+`IMOVE_STAGE1__INDEX_BACKEND=faiss` (requires the `faiss` extra) to use a faiss
+`IndexBinaryFlat` backend instead — **exact** (returns the identical candidate set, proven by a test) but
 SIMD-fast: ~20× faster at 10k images, ~180× at 100k, staying ~1 ms/query while
 the linear scan grows O(N).
 
@@ -39,8 +39,12 @@ All tunable thresholds live in one validated place: `config.py`
 ## Setup
 
 ```bash
-uv sync
+uv sync --all-extras
 ```
+
+Core install (`uv sync`) covers `compare` and the in-memory detector. Optional
+extras: `eval` (scikit-learn, for the LFW harness), `server` (FastAPI/uvicorn,
+for the HTTP API), `faiss` (the fast stage-1 backend).
 
 ## Usage
 
@@ -137,6 +141,26 @@ Serving knobs live under `config.py`'s `ServingConfig` (env-overridable):
 | alert threshold | `IMOVE_SERVING__ALERT__MIN_DISTINCT_USERS` | `1` | distinct users a reused image must hit to alert (raise to ≥2 for high-confidence-only) |
 | retention TTL | `IMOVE_SERVING__TTL__ENABLED` / `__MAX_AGE_DAYS` | off | exclude/purge records older than the TTL |
 | recency decay | `IMOVE_SERVING__DECAY__ENABLED` / `__HALF_LIFE_DAYS` | off | down-weight older records in alert severity |
+
+## Security & privacy notes
+
+The HTTP server is a **localhost demo**, not a hardened service. It binds
+127.0.0.1 by default and deliberately ships without:
+
+- **authentication or rate limiting** — anyone who can reach it can enroll and
+  query images;
+- **upload limits** — requests are read fully into memory and decoded with
+  OpenCV, so cap request size (and decoded dimensions) at a gateway before
+  exposing it;
+- **source isolation** — match responses intentionally include the matched
+  records' `user_id`/`attempt_id`, because cross-source recurrence *is* the
+  signal being reported.
+
+Enrolled images are retained **indefinitely** as lossless PNGs (stage-2
+verification re-checks actual pixels); enable the TTL
+(`IMOVE_SERVING__TTL__ENABLED=1`) to bound retention. Anything beyond a local
+demo should sit behind a real gateway (auth, rate limits, body caps) and treat
+the corpus directory as sensitive data.
 
 ## Layout
 
