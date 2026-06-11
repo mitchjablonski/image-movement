@@ -77,7 +77,7 @@ def score_pairs(identities, config, verifier, rng):
     records: list[PairRecord] = []
     for name, imgs in identities:
         # Positives + different-identity negatives: perturbed copies of imgs[0].
-        for variant, _params in generate_variants(imgs[0], config.eval.variants_per_seed, rng, config.adversary):
+        for variant, _params in generate_variants(imgs[0], config.eval.variants_per_seed, rng, config.perturbation):
             vhash = phash(variant, hs)
             for other in enrolled:
                 dist, hp, inl, gok = _decide(verifier, variant, enrolled[other], vhash, ehash[other], maxd)

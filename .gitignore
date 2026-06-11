@@ -13,6 +13,7 @@ wheels/
 .deeppairing/
 .claude/
 .pytest_cache/
+.mcp.json
 
 # Runtime corpus (SQLite db + image blobs); keep the data/seeds placeholder
 data/corpus/

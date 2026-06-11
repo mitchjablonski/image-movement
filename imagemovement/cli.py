@@ -33,7 +33,8 @@ def cmd_compare(args: argparse.Namespace) -> int:
     print(f"est. zoom:        {ev.scale:.3f}")
     print(f"est. rotation:    {ev.rotation_deg:.2f} deg")
     print(f"est. shift:       {ev.translation:.1f} px")
-    print(f"near-identity:    {ev.geom_ok}")
+    print(f"residual:         {ev.residual:.1f}  (photometric gate passes <= {cfg.stage2.max_residual})")
+    print(f"all gates pass:   {ev.geom_ok}")
     print(f"VERDICT:          {'SAME IMAGE (match)' if match else 'different images (no match)'}")
     return 0
 

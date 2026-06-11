@@ -7,7 +7,7 @@ JPEG re-encode (with realistic chroma subsampling) that the processing pipeline
 applies on receipt, so compression noise lands on the already-transformed
 pixels -- exactly what the detector will see in production.
 
-The amount of perturbation is read from config.AdversarySpace, the single
+The amount of perturbation is read from config.PerturbationSpace, the single
 place the perturbation space is defined.
 
 Images are OpenCV BGR uint8 ndarrays throughout.
@@ -20,7 +20,7 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 
-from .config import AdversarySpace
+from .config import PerturbationSpace
 
 
 @dataclass(frozen=True)
@@ -96,7 +96,7 @@ def _signed_shift(rng: np.random.Generator, lo: int, hi: int) -> int:
     return mag if rng.random() < 0.5 else -mag
 
 
-def random_params(space: AdversarySpace, rng: np.random.Generator) -> PerturbParams:
+def random_params(space: PerturbationSpace, rng: np.random.Generator) -> PerturbParams:
     """Sample one PerturbParams from the configured perturbation space."""
     return PerturbParams(
         quality=int(rng.integers(space.quality_min, space.quality_max + 1)),
@@ -111,7 +111,7 @@ def generate_variants(
     img: np.ndarray,
     n: int,
     rng: np.random.Generator,
-    space: AdversarySpace,
+    space: PerturbationSpace,
 ) -> list[tuple[np.ndarray, PerturbParams]]:
     """Produce ``n`` labeled positive variants of ``img`` from the perturbation space."""
     out = []

@@ -1,7 +1,7 @@
 """Central, validated configuration for the detection cascade (pydantic v2).
 
 Per the team decision, everything config-shaped is a validated pydantic model:
-the adversary/test space, the two stage configs, the eval settings, and the
+the perturbation/test space, the two stage configs, the eval settings, and the
 Phase-2 serving/corpus knobs, all nested under DetectorConfig. Validation
 happens here, once, at the boundary -- so a bad threshold (from a file, env
 var, or CLI) fails loudly instead of silently skewing results. Engine classes
@@ -21,12 +21,12 @@ from pydantic import BaseModel, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class AdversarySpace(BaseModel):
+class PerturbationSpace(BaseModel):
     """How much perturbation we SIMULATE when generating positive variants.
 
-    This is the *threat we test against* -- distinct from what the detector
-    tolerates (Stage2Config). DetectorConfig validates that acceptance covers
-    this range.
+    This is the *transform band we validate against* -- distinct from what the
+    detector tolerates (Stage2Config). DetectorConfig validates that acceptance
+    covers this range.
 
     quality/zoom/shift are each an explicit (min, max) band. Shift is applied
     per axis with a random sign, so shift_min_px=0 means 'no-shift allowed' and
@@ -44,7 +44,7 @@ class AdversarySpace(BaseModel):
     subsampling: Literal["4:2:0", "4:4:4"] = "4:2:0"
 
     @model_validator(mode="after")
-    def _ordered(self) -> "AdversarySpace":
+    def _ordered(self) -> "PerturbationSpace":
         if self.quality_min > self.quality_max:
             raise ValueError("quality_min must be <= quality_max")
         if self.zoom_min > self.zoom_max:
@@ -145,17 +145,17 @@ class DetectorConfig(BaseSettings):
 
     stage1: Stage1Config = Field(default_factory=Stage1Config)
     stage2: Stage2Config = Field(default_factory=Stage2Config)
-    adversary: AdversarySpace = Field(default_factory=AdversarySpace)
+    perturbation: PerturbationSpace = Field(default_factory=PerturbationSpace)
     eval: EvalConfig = Field(default_factory=EvalConfig)
     serving: ServingConfig = Field(default_factory=ServingConfig)
 
     @model_validator(mode="after")
-    def _acceptance_covers_adversary(self) -> "DetectorConfig":
+    def _acceptance_covers_perturbation(self) -> "DetectorConfig":
         # The detector must tolerate at least the zoom we simulate, or the eval
         # would manufacture false negatives against its own test data.
-        if self.stage2.max_scale_dev < self.adversary.max_zoom_dev:
+        if self.stage2.max_scale_dev < self.perturbation.max_zoom_dev:
             raise ValueError(
                 f"stage2.max_scale_dev ({self.stage2.max_scale_dev}) must be >= "
-                f"the simulated zoom deviation ({self.adversary.max_zoom_dev:.3f})"
+                f"the simulated zoom deviation ({self.perturbation.max_zoom_dev:.3f})"
             )
         return self

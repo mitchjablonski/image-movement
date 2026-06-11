@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "deeppairing": {
-      "command": "node",
-      "args": ["/mnt/c/Users/mitch/Documents/Development/deepPairing/packages/mcp-server/dist/standalone.js"]
-    }
-  }
-}
